@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
+@Profile("dev")
 @Configuration
 @Slf4j
 @RequiredArgsConstructor
@@ -21,17 +23,17 @@ public class BaseInitData {
     @Bean
     public ApplicationRunner baseInitDataRunner() {
         return args -> {
-            wokr1();
-            work2();
-            work3();
-            work4();
-            work5();
-            work6();
-            work7();
-            work8();
-            work9();
-            work10();
-            work11();
+//            wokr1();
+//            work2();
+//            work3();
+//            work4();
+//            work5();
+//            work6();
+//            work7();
+//            work8();
+//            work9();
+//            work10();
+//            work11();
         };
     }
 
