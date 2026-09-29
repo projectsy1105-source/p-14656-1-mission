@@ -40,7 +40,11 @@ public class PostService {
         if (content != null) {
             post.setContent(content);
         }
-        post.setLastModifiedAt(OffsetDateTime.now());
         return postRepository.save(post);
+    }
+
+    public void delete(String id) {
+        Post post = findById(id);
+        postRepository.delete(post);
     }
 }
