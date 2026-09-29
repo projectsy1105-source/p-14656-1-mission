@@ -266,4 +266,93 @@ public class CommentControllerTests extends BaseTest {
                 .andExpect(jsonPath("$.pageable.pageNumber").value(1))
                 .andExpect(jsonPath("$.pageable.pageSize").value(5));
     }
+
+    @Test
+    @DisplayName("GET /api/v1/posts/{postId}/comments/search - 내용 검색")
+    void t13() throws Exception {
+        Post post = createTestPost();
+
+        // 검색용 Comment 생성
+        mockMvc.perform(
+                post("/api/v1/posts/{postId}/comments", post.getId())
+                        .contentType("application/json")
+                        .content(
+                                objectMapper.writeValueAsBytes(
+                                        Map.of(
+                                                "content", "UniqueSearchableContent",
+                                                "author", "SearchAuthor"
+                                        )
+                                )
+                        )
+        ).andExpect(status().isCreated());
+
+        // 내용으로 검색
+        mockMvc.perform(
+                        get("/api/v1/posts/{postId}/comments/search", post.getId())
+                                .param("keyword", "UniqueSearchableContent")
+                                .param("searchType", "CONTENT")
+                                .contentType("application/json")
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].content").value("UniqueSearchableContent"));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/posts/{postId}/comments/search - 작성자 검색")
+    void t14() throws Exception {
+        Post post = createTestPost();
+
+        // 검색용 Comment 생성
+        mockMvc.perform(
+                post("/api/v1/posts/{postId}/comments", post.getId())
+                        .contentType("application/json")
+                        .content(
+                                objectMapper.writeValueAsBytes(
+                                        Map.of(
+                                                "content", "Content",
+                                                "author", "UniqueSearchableAuthor"
+                                        )
+                                )
+                        )
+        ).andExpect(status().isCreated());
+
+        // 작성자로 검색
+        mockMvc.perform(
+                        get("/api/v1/posts/{postId}/comments/search", post.getId())
+                                .param("keyword", "UniqueSearchableAuthor")
+                                .param("searchType", "AUTHOR")
+                                .contentType("application/json")
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].author").value("UniqueSearchableAuthor"));
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/posts/{postId}/comments/search - 내용+작성자 검색 (기본값)")
+    void t15() throws Exception {
+        Post post = createTestPost();
+
+        // 검색용 Comment 생성
+        mockMvc.perform(
+                post("/api/v1/posts/{postId}/comments", post.getId())
+                        .contentType("application/json")
+                        .content(
+                                objectMapper.writeValueAsBytes(
+                                        Map.of(
+                                                "content", "ContentAndAuthorSearchTest",
+                                                "author", "TestAuthor"
+                                        )
+                                )
+                        )
+        ).andExpect(status().isCreated());
+
+        // 내용+작성자로 검색 (기본값)
+        mockMvc.perform(
+                        get("/api/v1/posts/{postId}/comments/search", post.getId())
+                                .param("keyword", "ContentAndAuthorSearchTest")
+                                .contentType("application/json")
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].content").value("ContentAndAuthorSearchTest"));
+    }
 }

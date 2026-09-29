@@ -35,7 +35,23 @@ public class PostController {
     }
 
     @RequestMapping
-    public ResponseEntity<Page<Post>> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<Post>> findAll(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size) {
+
+        return ResponseEntity.ok(postService.findAll(PageRequest.of(page, size)));
+    }
+
+
+    @RequestMapping("/search")
+    public ResponseEntity<Page<Post>> search(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size,
+                                              @RequestParam(required = false) String keyword,
+                                              @RequestParam(defaultValue = "title_content") String searchType) {
+
+        if (keyword != null && !keyword.isBlank() && searchType != null) {
+            return ResponseEntity.ok(postService.search(keyword, searchType, PageRequest.of(page, size)));
+        }
+
         return ResponseEntity.ok(postService.findAll(PageRequest.of(page, size)));
     }
 

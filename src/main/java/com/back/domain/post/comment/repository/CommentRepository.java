@@ -13,5 +13,9 @@ public interface CommentRepository extends ElasticsearchRepository<Comment, Stri
     Page<Comment> findAll(Pageable pageable);
     List<Comment> findAllByPostId(String postId);
     Page<Comment> findAllByPostId(String postId, Pageable pageable);
+    Page<Comment> findByPostIdAndContentContaining(String postId, String keyword, Pageable pageable);
+    Page<Comment> findByPostIdAndAuthorContaining(String postId, String keyword, Pageable pageable);
+    Page<Comment> findByPostIdAndContentContainingOrPostIdAndAuthorContaining(String postId1, String contentKeyword,
+                                                                              String postId2, String authorKeyword, Pageable pageable);
 
 }

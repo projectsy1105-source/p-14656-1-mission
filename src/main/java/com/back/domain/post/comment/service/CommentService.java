@@ -16,6 +16,12 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
 
+    public enum SearchType {
+        CONTENT,
+        AUTHOR,
+        CONTENT_AUTHOR
+    }
+
     public long count() {
         return commentRepository.count();
     }
@@ -26,6 +32,14 @@ public class CommentService {
 
     public Page<Comment> findAll(Pageable pageable) {
         return commentRepository.findAll(pageable);
+    }
+
+    public Page<Comment> search(String postId, String keyword, SearchType type, Pageable pageable) {
+        return switch (type) {
+            case CONTENT -> commentRepository.findByPostIdAndContentContaining(postId, keyword, pageable);
+            case AUTHOR -> commentRepository.findByPostIdAndAuthorContaining(postId, keyword, pageable);
+            case CONTENT_AUTHOR -> commentRepository.findByPostIdAndContentContainingOrPostIdAndAuthorContaining(postId, keyword, postId, keyword, pageable);
+        };
     }
 
     public List<Comment> findByPostId(String postId) {

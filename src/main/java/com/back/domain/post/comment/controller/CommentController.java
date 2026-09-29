@@ -38,6 +38,21 @@ public class CommentController {
         return ResponseEntity.ok().body(commentService.findByPostId(PageRequest.of(page, size), postId));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<Comment>> findByPostId(@PathVariable String postId,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size,
+                                                      @RequestParam(required = false) String keyword,
+                                                      @RequestParam(required = false) CommentService.SearchType searchType) {
+        postService.findById(postId);
+        if (keyword != null && !keyword.isBlank()) {
+            if (searchType == null) {searchType = CommentService.SearchType.CONTENT_AUTHOR;}
+            return ResponseEntity.ok(commentService.search(postId, keyword, searchType, PageRequest.of(page, size)));
+        }
+
+        return ResponseEntity.ok().body(commentService.findByPostId(PageRequest.of(page, size), postId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Comment> findById(@PathVariable String postId, @PathVariable String id) {
         postService.findById(postId);

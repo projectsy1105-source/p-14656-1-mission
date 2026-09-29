@@ -15,6 +15,21 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
 
+    public enum SearchType {
+        TITLE,
+        CONTENT,
+        TITLE_CONTENT,
+    }
+
+    public Page<Post> search(String keyword, String type, Pageable pageable) {
+        return switch (type) {
+            case "title" -> postRepository.findByTitleContaining(keyword, pageable);
+            case "content" -> postRepository.findByContentContaining(keyword, pageable);
+            case "title_content" -> postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+            default -> postRepository.findAll(pageable);
+        };
+    }
+
     public long count() {
         return postRepository.count();
     }
