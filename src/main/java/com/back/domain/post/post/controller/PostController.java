@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +35,8 @@ public class PostController {
     }
 
     @RequestMapping
-    public ResponseEntity<List<Post>> findAll() {
-        return ResponseEntity.ok(postService.findAll());
+    public ResponseEntity<Page<Post>> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(postService.findAll(PageRequest.of(page, size)));
     }
 
     @RequestMapping("/{id}")

@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +31,11 @@ public class CommentController {
     ) {}
 
     @GetMapping
-    public ResponseEntity<List<Comment>> findByPostId(@PathVariable String postId) {
+    public ResponseEntity<Page<Comment>> findByPostId(@PathVariable String postId,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size) {
         postService.findById(postId);
-        return ResponseEntity.ok().body(commentService.findByPostId(postId));
+        return ResponseEntity.ok().body(commentService.findByPostId(PageRequest.of(page, size), postId));
     }
 
     @GetMapping("/{id}")
